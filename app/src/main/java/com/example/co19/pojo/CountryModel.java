@@ -1,6 +1,6 @@
 package com.example.co19.pojo;
 
-public class CountryModel {
+public class CountryModel implements Comparable<CountryModel> {
     private String Country;
     private String CountryCode;
     private String Slug;
@@ -106,5 +106,11 @@ public class CountryModel {
 
     public void setDate(String date) {
         Date = date;
+    }
+
+    @Override
+    public int compareTo(CountryModel country) {
+        Integer totalDeaths = Integer.parseInt(this.TotalDeaths);
+        return totalDeaths.compareTo(Integer.parseInt(country.getTotalDeaths()));
     }
 }
