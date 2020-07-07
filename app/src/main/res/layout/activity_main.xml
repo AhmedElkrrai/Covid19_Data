@@ -65,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:text="Global" />
+            android:text="@string/global" />
 
         <TextView
             android:id="@+id/global_newConfirmed"
@@ -81,7 +81,7 @@
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:gravity="center" />
 
         <TextView

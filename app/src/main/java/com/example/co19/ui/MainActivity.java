@@ -1,18 +1,28 @@
 package com.example.co19.ui;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.co19.R;
 import com.example.co19.pojo.CountryModel;
@@ -26,6 +36,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     CovidViewModel covidViewModel;
     final CountryAdapter adapter = new CountryAdapter();
 
@@ -34,28 +45,63 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        covidViewModel = ViewModelProviders.of(this).get(CovidViewModel.class);
-        covidViewModel.getSummary();
 
-        RecyclerView recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        if (isNetworkConnectionAvailable()) {
+            covidViewModel = ViewModelProviders.of(this).get(CovidViewModel.class);
+            covidViewModel.getSummary();
 
-        covidViewModel.covidMutableLiveData.observe(this, new Observer<SummaryModel>() {
+            RecyclerView recyclerView = findViewById(R.id.recycler);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(adapter);
+
+            covidViewModel.covidMutableLiveData.observe(this, new Observer<SummaryModel>() {
+                @Override
+                public void onChanged(SummaryModel summaryModel) {
+
+                    List<CountryModel> countries = summaryModel.getCountries();
+                    GlobalModel globalModel = summaryModel.getGlobal();
+
+
+                    adapter.setList(countries);
+                    setGlobalData(globalModel);
+
+                }
+            });
+        }
+
+    }
+
+    public void checkNetworkConnection() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No internet Connection");
+        builder.setMessage("Please turn on internet connection to continue");
+        builder.setNegativeButton("close", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public void onChanged(SummaryModel summaryModel) {
-
-                List<CountryModel> countries = summaryModel.getCountries();
-                GlobalModel globalModel = summaryModel.getGlobal();
-
-
-
-                adapter.setList(countries);
-                setGlobalData(globalModel);
-
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finishAndRemoveTask();
             }
         });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
+    public boolean isNetworkConnectionAvailable() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnected();
+        if (isConnected) {
+            Log.d("Network", "Connected");
+            return true;
+        } else {
+            checkNetworkConnection();
+            Log.d("Network", "Not Connected");
+            return false;
+        }
     }
 
     @Override
@@ -64,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView= (SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
