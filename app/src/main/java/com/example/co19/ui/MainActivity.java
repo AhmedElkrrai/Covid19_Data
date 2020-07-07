@@ -14,7 +14,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,16 +21,12 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.co19.R;
 import com.example.co19.pojo.CountryModel;
 import com.example.co19.pojo.GlobalModel;
 import com.example.co19.pojo.SummaryModel;
-import com.google.gson.Gson;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         if (isNetworkConnectionAvailable()) {
             covidViewModel = ViewModelProviders.of(this).get(CovidViewModel.class);
@@ -61,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
                     List<CountryModel> countries = summaryModel.getCountries();
                     GlobalModel globalModel = summaryModel.getGlobal();
 
-
                     adapter.setList(countries);
                     setGlobalData(globalModel);
 
@@ -71,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void checkNetworkConnection() {
+    public void networkConnectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No internet Connection");
         builder.setMessage("Please turn on internet connection to continue");
@@ -98,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Network", "Connected");
             return true;
         } else {
-            checkNetworkConnection();
+            networkConnectionDialog();
             Log.d("Network", "Not Connected");
             return false;
         }
