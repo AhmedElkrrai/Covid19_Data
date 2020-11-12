@@ -3,12 +3,12 @@ package com.example.co19.data;
 
 import com.example.co19.pojo.SummaryModel;
 
-import retrofit2.Call;
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.http.GET;
 
-public interface CountryInterface {
+public interface CovidApiService {
 
     @GET("summary")
-    Call<SummaryModel> getSummary();
+    Observable<SummaryModel> getSummary();
 
 }

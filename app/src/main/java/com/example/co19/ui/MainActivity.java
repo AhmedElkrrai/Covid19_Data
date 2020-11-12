@@ -29,26 +29,29 @@ import com.example.co19.pojo.SummaryModel;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    CovidViewModel covidViewModel;
-    final CountryAdapter adapter = new CountryAdapter();
 
+    private final CountryAdapter adapter = new CountryAdapter();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (isNetworkConnectionAvailable()) {
-            covidViewModel = ViewModelProviders.of(this).get(CovidViewModel.class);
-            covidViewModel.getSummary();
+            CovidViewModel viewModel = ViewModelProviders.of(this).get(CovidViewModel.class);
+            viewModel.getSummary();
 
             RecyclerView recyclerView = findViewById(R.id.recycler);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
 
-            covidViewModel.covidMutableLiveData.observe(this, new Observer<SummaryModel>() {
+            viewModel.getCountryList().observe(this, new Observer<SummaryModel>() {
                 @Override
                 public void onChanged(SummaryModel summaryModel) {
 
