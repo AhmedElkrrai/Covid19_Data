@@ -31,5 +31,4 @@ public class CovidViewModel extends ViewModel {
 
     }
 
-
 }

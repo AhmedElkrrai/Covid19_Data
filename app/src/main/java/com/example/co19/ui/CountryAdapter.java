@@ -45,15 +45,29 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         return countries.size();
     }
 
+    public List<CountryModel> sortCountriesByTotalDeaths(List<CountryModel> countries) {
+        Collections.sort(countries, Collections.reverseOrder());
+        return countries;
+    }
+
+    class CountryViewHolder extends RecyclerView.ViewHolder {
+        TextView country, newConfirmed, totalConfirmed, newDeaths, totalDeaths;
+
+        public CountryViewHolder(@NonNull View itemView) {
+            super(itemView);
+            country = itemView.findViewById(R.id.country);
+            newConfirmed = itemView.findViewById(R.id.newConfirmed);
+            totalConfirmed = itemView.findViewById(R.id.totalConfirmed);
+            newDeaths = itemView.findViewById(R.id.newDeaths);
+            totalDeaths = itemView.findViewById(R.id.totalDeaths);
+
+        }
+    }
+
     void setList(List<CountryModel> countries) {
         this.countries = sortCountriesByTotalDeaths(countries);
         searchListFull = new ArrayList<>(countries);
         notifyDataSetChanged();
-    }
-
-    public List<CountryModel> sortCountriesByTotalDeaths(List<CountryModel> countries) {
-        Collections.sort(countries, Collections.reverseOrder());
-        return countries;
     }
 
     @Override
@@ -68,10 +82,10 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
             if (constraint == null || constraint.length() == 0)
                 filteredList.addAll(searchListFull);
             else {
-                String fliterPattern = constraint.toString().toLowerCase().trim();
+                String filterPattern = constraint.toString().toLowerCase().trim();
 
                 for (CountryModel country : searchListFull) {
-                    if (country.getCountry().toLowerCase().contains(fliterPattern))
+                    if (country.getCountry().toLowerCase().contains(filterPattern))
                         filteredList.add(country);
                 }
             }
@@ -87,18 +101,4 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
             notifyDataSetChanged();
         }
     };
-
-    class CountryViewHolder extends RecyclerView.ViewHolder {
-        TextView country, newConfirmed, totalConfirmed, newDeaths, totalDeaths;
-
-        public CountryViewHolder(@NonNull View itemView) {
-            super(itemView);
-            country = itemView.findViewById(R.id.country);
-            newConfirmed = itemView.findViewById(R.id.newConfirmed);
-            totalConfirmed = itemView.findViewById(R.id.totalConfirmed);
-            newDeaths = itemView.findViewById(R.id.newDeaths);
-            totalDeaths = itemView.findViewById(R.id.totalDeaths);
-
-        }
-    }
 }
